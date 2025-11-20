@@ -31,7 +31,7 @@ jobs:
         run: pdm install
 
       - name: Install build backend
-        run: pdm run pip install hatchling
+        run: pdm run pip install hatchling editables
 
       - name: Install plugin package
         run: pdm run pip install -e . --no-build-isolation
