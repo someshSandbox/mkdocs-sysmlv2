@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: pdm install
 
+      - name: Install plugin package
+        run: pdm run pip install -e .
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
 
