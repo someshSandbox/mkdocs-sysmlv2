@@ -30,8 +30,11 @@ jobs:
       - name: Install dependencies
         run: pdm install
 
+      - name: Install build backend
+        run: pdm run pip install hatchling
+
       - name: Install plugin package
-        run: pdm run pip install -e .
+        run: pdm run pip install -e . --no-build-isolation
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
