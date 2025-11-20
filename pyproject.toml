@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "sysmlv2"
+name = "mkdocs-sysml2"
 version = "0.1.0"
 description = "MkDocs plugin that renders lightweight SysML v2 models"
 readme = "README.md"
@@ -29,7 +29,7 @@ classifiers = [
 Homepage = "https://github.com/someshkashyap/mkdocs-sysmlv2"
 
 [project.entry-points."mkdocs.plugins"]
-sysmlv2 = "mkdocs_sysmlv2.plugin:SysMLv2Plugin"
+sysml2 = "mkdocs_sysmlv2.plugin:SysMLv2Plugin"
 
 [tool.hatch.version]
 path = "src/mkdocs_sysmlv2/__init__.py"

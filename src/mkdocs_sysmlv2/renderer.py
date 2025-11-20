@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import html
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from .model import SysMLElement, SysMLModel, SysMLRelation
 
@@ -28,18 +28,20 @@ class SysMLRenderer:
         self.gap_x = 48
         self.gap_y = 32
 
-    def render(self, model: SysMLModel, *, fmt: str, title: str) -> str:
+    def render(
+        self, model: SysMLModel, *, fmt: str, title: str, inline: bool = False
+    ) -> str:
         if fmt == "svg":
-            return self.render_svg(model, title=title)
+            return self.render_svg(model, title=title, inline=inline)
         if fmt == "html":
-            svg = self.render_svg(model, title=title)
+            svg = self.render_svg(model, title=title, inline=True)
             return f"<figure class=\"sysmlv2-diagram\">{svg}</figure>"
         raise ValueError(f"Unsupported format '{fmt}'")
 
-    def render_svg(self, model: SysMLModel, *, title: str) -> str:
+    def render_svg(self, model: SysMLModel, *, title: str, inline: bool = False) -> str:
         nodes = [node for node in model.nodes if node.kind != "package"]
         if not nodes:
-            return self._render_empty_svg(title or "SysML model", model)
+            return self._render_empty_svg(title or "SysML model", model, inline=inline)
 
         package_names = self._package_columns(nodes, model)
         placements = self._layout_nodes(nodes, package_names)
@@ -50,10 +52,13 @@ class SysMLRenderer:
         packages_svg = self._render_package_labels(package_names)
         nodes_svg = self._render_nodes(nodes, placements)
 
-        svg_elements = [
-            '<?xml version="1.0" encoding="UTF-8"?>',
+        svg_elements: List[str] = []
+        if not inline:
+            svg_elements.append('<?xml version="1.0" encoding="UTF-8"?>')
+        svg_elements.append(
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" '
-            f'height="{height}" viewBox="0 0 {width} {height}" role="img">',
+            f'height="{height}" viewBox="0 0 {width} {height}" role="img">'
+        )
             f"<title>{html.escape(title)}</title>",
             self._style_block(),
             '<defs><marker id="sysmlv2-arrow" viewBox="0 0 10 10" refX="10" refY="5" '
@@ -74,14 +79,18 @@ class SysMLRenderer:
         svg_elements.append("</svg>")
         return "\n".join(svg_elements)
 
-    def _render_empty_svg(self, title: str, model: SysMLModel) -> str:
+    def _render_empty_svg(
+        self, title: str, model: SysMLModel, inline: bool = False
+    ) -> str:
         width, height = 480, 200
         desc = (
             html.escape(model.source_path) if model.source_path else "No elements found"
         )
-        return "\n".join(
+        elements: List[str] = []
+        if not inline:
+            elements.append('<?xml version="1.0" encoding="UTF-8"?>')
+        elements.extend(
             [
-                '<?xml version="1.0" encoding="UTF-8"?>',
                 f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" '
                 f'height="{height}" viewBox="0 0 {width} {height}" role="img">',
                 f"<title>{html.escape(title)}</title>",
@@ -94,6 +103,7 @@ class SysMLRenderer:
                 "</svg>",
             ]
         )
+        return "\n".join(elements)
 
     def _package_columns(self, nodes: List[SysMLElement], model: SysMLModel) -> List[str]:
         declared = [pkg.name for pkg in model.packages]
@@ -298,4 +308,3 @@ class SysMLRenderer:
 }
 </style>
         """.strip()
-

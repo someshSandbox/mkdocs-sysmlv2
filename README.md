@@ -1,39 +1,30 @@
-# sysmlv2
+# mkdocs-sysml2
 
-MkDocs plugin that mimics the workflow of [mkdocs-build-plantuml](https://github.com/christo-ph/mkdocs_build_plantuml) but targets SysML v2 textual models.  
-It watches your SysML sources, renders lightweight SVG diagrams, and drops the files into an `out` directory that you can reference just like any other image in Markdown.
+MkDocs plugin for rendering SysML v2 textual models.  
+It watches your SysML sources, renders lightweight diagrams directly inside your pages, and keeps your documentation and architecture views in sync.
 
 > :rocket: This is **not** a full SysML compiler. The goal is to have a pragmatic renderer that visualises core structures (packages, parts, usages, connections) directly inside MkDocs without needing an external toolchain.
 
 ## Features
 
-- Recursive discovery of `docs/diagrams/src/**/*.sysml` (same layout as the PlantUML plugin).
-- Incremental rendering (only updates SVG/HTML artifacts when the source is newer).
+- Inline rendering of ```sysml``` or ```sysmlv2``` code blocks (no additional image pipeline).
 - Simple SysML parser that recognises packages, parts, items, interfaces, usages, connect/flow statements, and renders them as cards + relationships.
-- Configurable output format (`svg` or `html`), output location, and title strategy.
+- Configurable output format (`svg` or `html`) and title strategy.
 - Works with `mkdocs serve` and `mkdocs build`.
 
-## Installation
+## Quick start
 
-```bash
-pip install sysmlv2
-```
+1. Install the plugin (or add it to your dependency manager):
 
-The package is defined as a standard MkDocs plugin, so it can be installed alongside any MkDocs theme (Material, etc.).
+   ```bash
+   pip install mkdocs-sysml2
+   ```
 
-## Example project layout
+2. Enable it inside `mkdocs.yml` (see the next section).
+3. Add a fenced block with ```sysml``` or ```sysmlv2``` to any Markdown page.
+4. Run `mkdocs serve` and view the rendered diagram inline.
 
-```
-docs/
-  diagrams/
-    src/
-      Batmobile.sysml
-    out/
-      Batmobile.svg
-mkdocs.yml
-```
-
-Any `.sysml` (or `.sysmlv2`) file you place under `docs/diagrams/src` will get rendered to `docs/diagrams/out` by default. You can organise your models into sub-directories; the plugin mirrors the folder structure inside the `out` directory, just like the PlantUML build plugin.
+The package works with any MkDocs theme and requires no external assets.
 
 ## Configuration
 
@@ -42,26 +33,38 @@ Add the plugin to `mkdocs.yml`:
 ```yaml
 plugins:
   - search
-  - sysmlv2:
-      diagram_root: docs/diagrams   # parent folder that contains src/out
-      input_folder: src             # folder with *.sysml files
-      output_folder: out            # rendered artifacts
-      output_format: svg            # svg (default) or html
-      input_extensions: ".sysml,.sysmlv2"
-      title_mode: filename          # filename, package, filename+package
-      allow_multiple_roots: false   # look for multiple diagram_root matches
-      output_in_dir: false          # mimic mkdocs-build-plantuml behaviour
-      always_render: false          # force rebuild every time
+  - sysml2:
+      code_fences: "sysml,sysmlv2"  # languages to intercept
+      output_format: html           # inline html (default) or raw svg
+      title_source: page            # use page title, file name, or none
+      strict: false                 # raise exceptions when rendering fails
 ```
 
-All configuration keys line up with the PlantUML build plugin so the upgrade path is predictable.  
-If you change the folder layout, ensure that the resulting artifacts still live below `docs_dir` so MkDocs can serve them.
+The plugin intercepts fenced code blocks in Markdown and replaces them with rendered diagrams, so you only need to maintain the SysML next to the prose explaining it.
 
-## Writing SysML
+### Optional block attributes
 
-Create a `.sysml` file under your `src` directory:
+You can override behaviour per block by adding lightweight attributes to the fence header:
 
-```sysml
+````markdown
+```sysml title="Battery interface" output="svg"
+package Demo {
+    interface def PowerInterface;
+}
+```
+````
+
+Supported attributes:
+
+- `title="..."` overrides the title injected into the SVG.
+- `output="html|svg"` temporarily overrides the configured `output_format`.
+
+## Writing SysML inline
+
+Create a fenced block inside any Markdown file:
+
+````markdown
+```sysml title="Vehicle structure"
 package Batmobile {
     part def Vehicle;
     part def Batmobile :> Vehicle {
@@ -69,29 +72,11 @@ package Batmobile {
         part engine : BatmobileEngine;
         interface bat2eng : PowerInterface connect battery.powerPort to engine.port;
     }
-
-    part usage fleetVehicle : Batmobile;
 }
 ```
+````
 
-Start MkDocs:
-
-```bash
-mkdocs serve
-```
-
-The plugin creates an SVG next to the source file, e.g. `docs/diagrams/out/Batmobile.svg`.  
-Reference it like a normal image:
-
-```markdown
-![Batmobile](diagrams/out/Batmobile.svg)
-```
-
-Each render contains:
-
-- Cards for every element the parser recognises (parts, interfaces, use cases, etc.).
-- Edges for specialisations (`:>`), typings/usages (`:`), `connect` statements, and `from/to` flow statements.
-- Tooltips that show the source path (to keep track of the file that introduced the view).
+Run `mkdocs serve` and the block will render inline as an SVG (wrapped in a `<figure>` by default).
 
 ## Output format
 
@@ -100,28 +85,25 @@ Each render contains:
 
 ## Sample project
 
-This repo ships with a ready-to-run MkDocs site in `example/` that demonstrates the plugin end to end.
+This repo ships with `example/` showing inline rendering with MkDocs Material. Run it via:
 
 ```bash
-# 1. Install dependencies and register the plugin in editable mode.
 pdm install
-
-# 2. Launch MkDocs using the sample config.
 pdm run mkdocs serve -f example/mkdocs.yml
 ```
 
-PDM expands a local virtual environment and exposes the `sysmlv2` plugin to MkDocs. When the dev server starts, open http://127.0.0.1:8000 — the front page references `docs/diagrams/out/batmobile.svg`, which is rendered from `docs/diagrams/src/batmobile.sysml` by the plugin. Edit the `.sysml` file and the diagram will refresh as you save.
+Open the dev server and inspect how the SysML block in `docs/index.md` turns into an SVG diagram dynamically.
 
-## Relationship to mkdocs-build-plantuml
+To run the same checks our CI does, execute:
 
-The project mirrors the ergonomics of `mkdocs-build-plantuml-plugin`:
+```bash
+pdm run mkdocs build -f example/mkdocs.yml
+```
 
-- identical default directories (`docs/diagrams/src` ➜ `docs/diagrams/out`);
-- incremental builds;
-- ability to discover multiple `diagram_root` folders in monorepos;
-- simple MkDocs plug-in entry point (`plugins: - sysmlv2`).
+## Live docs
 
-You can therefore drop it into an existing document set that already uses the PlantUML plugin with minimal changes.
+The latest build of the example site is available on GitHub Pages:  
+https://someshkashyap.github.io/mkdocs-sysmlv2/
 
 ## Contributing
 

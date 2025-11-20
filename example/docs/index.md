@@ -1,7 +1,21 @@
 # SysML v2 Sample
 
-The `sysmlv2` MkDocs plugin scans `.sysml` sources under `docs/diagrams/src`, renders SVGs into `docs/diagrams/out`, and you can embed those images like any other asset.
+The `mkdocs-sysml2` plugin renders SysML fences inline. The snippet below stays inside
+this Markdown file, and the plugin converts it into a diagram while `mkdocs serve` is
+running:
 
-Below diagram is generated from [`diagrams/src/batmobile.sysml`](diagrams/src/batmobile.sysml) while running `mkdocs serve`:
-
-![Batmobile](diagrams/out/batmobile.svg)
+````markdown
+```sysml title="Batmobile structure"
+package Demo::Batmobile {
+    part def Vehicle;
+    part def Batmobile :> Vehicle {
+        part seat [2];
+        part engine : BatmobileEngine;
+        interface bat2eng : PowerInterface connect battery.powerPort to engine.powerPort;
+    }
+    part def BatmobileEngine;
+    interface def PowerInterface;
+    part usage FleetVehicle : Batmobile;
+}
+```
+````
