@@ -59,17 +59,20 @@ class SysMLRenderer:
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" '
             f'height="{height}" viewBox="0 0 {width} {height}" role="img">'
         )
-            f"<title>{html.escape(title)}</title>",
-            self._style_block(),
-            '<defs><marker id="sysmlv2-arrow" viewBox="0 0 10 10" refX="10" refY="5" '
-            'markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">'
-            '<path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs>',
-            '<rect class="sysmlv2-canvas" x="0" y="0" '
-            f'width="{width}" height="{height}" rx="8" ry="8"></rect>',
-            packages_svg,
-            edges,
-            nodes_svg,
-        ]
+        svg_elements.extend(
+            [
+                f"<title>{html.escape(title)}</title>",
+                self._style_block(),
+                '<defs><marker id="sysmlv2-arrow" viewBox="0 0 10 10" refX="10" refY="5" '
+                'markerUnits="strokeWidth" markerWidth="10" markerHeight="7" orient="auto">'
+                '<path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs>',
+                '<rect class="sysmlv2-canvas" x="0" y="0" '
+                f'width="{width}" height="{height}" rx="8" ry="8"></rect>',
+                packages_svg,
+                edges,
+                nodes_svg,
+            ]
+        )
 
         if model.source_path:
             svg_elements.append(
