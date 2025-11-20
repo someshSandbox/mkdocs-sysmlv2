@@ -41,12 +41,12 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Build MkDocs site
-        run: pdm run mkdocs build -f example/mkdocs.yml -d site
+        run: pdm run mkdocs build -f example/mkdocs.yml -d example/site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: example/site
 
   deploy:
     runs-on: ubuntu-latest
