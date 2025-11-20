@@ -31,17 +31,21 @@ jobs:
       - name: Install dependencies
         run: pdm install
 
+      - name: Install plugin package
+        run: |
+          pdm run python -m pip install --upgrade pip
+          pdm run python -m pip install -e . --no-build-isolation
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
 
       - name: Build MkDocs site
-        run: |
-          PYTHONPATH=src pdm run mkdocs build -f example/mkdocs.yml -d example/site
+        run: pdm run mkdocs build -f example/mkdocs.yml -d site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: example/site
+          path: site
 
   deploy:
     runs-on: ubuntu-latest
