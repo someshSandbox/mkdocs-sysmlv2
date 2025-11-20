@@ -1,0 +1,13 @@
+site_name: SysML v2 Plugin Sample
+site_url: https://example.com
+plugins:
+  - search
+  - sysmlv2:
+      diagram_root: docs/diagrams
+      input_folder: src
+      output_folder: out
+      output_format: svg
+      title_mode: filename+package
+      always_render: true
+nav:
+  - Home: index.md

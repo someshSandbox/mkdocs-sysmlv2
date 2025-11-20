@@ -1,0 +1,19 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments and PDM data
+.venv/
+.pdm-python/
+.pdm-state/
+.pdm-cache/
+
+# MkDocs build output
+site/
+example/site/
+docs/diagrams/out/
+example/docs/diagrams/out/
+
+# OS metadata
+.DS_Store

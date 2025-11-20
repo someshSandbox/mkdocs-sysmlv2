@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sysmlv2"
+version = "0.1.0"
+description = "MkDocs plugin that renders lightweight SysML v2 models"
+readme = "README.md"
+authors = [
+  {name = "Somesh Kashyap"}
+]
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+dependencies = [
+  "mkdocs>=1.5",
+]
+keywords = ["mkdocs", "sysml", "documentation", "modeling"]
+classifiers = [
+  "Framework :: MkDocs",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Documentation",
+  "Topic :: Software Development :: Documentation",
+]
+
+[project.urls]
+Homepage = "https://github.com/someshkashyap/mkdocs-sysmlv2"
+
+[project.entry-points."mkdocs.plugins"]
+sysmlv2 = "mkdocs_sysmlv2.plugin:SysMLv2Plugin"
+
+[tool.hatch.version]
+path = "src/mkdocs_sysmlv2/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mkdocs_sysmlv2"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "src/mkdocs_sysmlv2",
+  "README.md",
+  "LICENSE",
+]
