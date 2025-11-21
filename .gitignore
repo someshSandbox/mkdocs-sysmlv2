@@ -12,9 +12,13 @@ __pycache__/
 # MkDocs build output
 site/
 example/site/
+example/temp-site/
 docs/site/
 docs/diagrams/out/
 example/docs/diagrams/out/
+
+# Packaging output
+src/mkdocs_sysml2.egg-info/
 
 # OS metadata
 .DS_Store

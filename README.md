@@ -89,7 +89,8 @@ This repo ships with `example/` showing inline rendering with MkDocs Material. R
 
 ```bash
 pdm install
-pdm run mkdocs serve -f example/mkdocs.yml
+pdm run python -m pip install -e . --no-build-isolation
+pdm run mkdocs serve -f docs/mkdocs.yml
 ```
 
 Open the dev server and inspect how the SysML block in `docs/index.md` turns into an SVG diagram dynamically.
@@ -97,7 +98,8 @@ Open the dev server and inspect how the SysML block in `docs/index.md` turns int
 To run the same checks our CI does, execute:
 
 ```bash
-pdm run mkdocs build -f example/mkdocs.yml
+pdm run python -m pip install -e . --no-build-isolation
+pdm run mkdocs build -f docs/mkdocs.yml
 ```
 
 ## Live docs
