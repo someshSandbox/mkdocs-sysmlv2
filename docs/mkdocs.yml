@@ -1,0 +1,11 @@
+site_name: SysML v2 Plugin Sample
+site_url: https://example.com
+plugins:
+  - search
+  - sysml2:
+      code_fences: "sysml,sysmlv2"
+      output_format: html
+      title_source: page
+nav:
+  - Home: index.md
+  - Build Info: build-info.md
