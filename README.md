@@ -103,7 +103,7 @@ pdm run mkdocs build -f example/mkdocs.yml
 ## Live docs
 
 The latest build of the example site is available on GitHub Pages:  
-https://someshkashyap.github.io/mkdocs-sysmlv2/
+https://someshsandbox.github.io/mkdocs-sysmlv2/
 
 ## Contributing
 
