@@ -36,8 +36,8 @@ jobs:
 
       - name: Build MkDocs site
         env:
-          PYTHONPATH: src
-        run: pdm run mkdocs build -f example/mkdocs.yml -d site
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: pdm run mkdocs build -f example/mkdocs.yml -d "${{ github.workspace }}/site"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
